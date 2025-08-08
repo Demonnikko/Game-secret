@@ -1,0 +1,229 @@
+<!-- index.html -->
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>ШОУ СЕКРЕТ — игра</title>
+  <link rel="preload" as="image" href="images/secret-title.jpg">
+  <style>
+    :root{
+      --bg:#000; --panel:#0b0b0f; --ink:#e9edf5;
+      --muted:#9aa3af; --gold1:#ffcf76; --gold2:#e0b44f; --gold3:#a6730c;
+      --btn:#e11d48; /* красная "Подписаться" */
+    }
+    html,body{height:100%;margin:0;background:#000;color:var(--ink);font:16px/1.55 Inter,system-ui,Segoe UI,Roboto}
+    .overlay{position:fixed;inset:0;display:grid;place-items:center;padding:20px;background:rgba(0,0,0,.6)}
+    .modal{width:min(92vw,680px);background:#000;border-radius:28px;padding:24px 22px 28px}
+    .logo{display:grid;place-items:center;margin:4px 0 18px}
+    .logo img{display:block;max-width:360px;width:85%;height:auto}
+    .title{margin:0 8px 10px;text-align:center;font-weight:900;letter-spacing:.06em;text-transform:uppercase}
+    .lead{margin:0 auto 16px;color:#cdd3dd;max-width:46ch;text-align:center}
+    .lead b{color:#fff}
+    .pills{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:10px 0}
+    .pill{border:1px solid rgba(255,255,255,.08);color:#cdd3dd;border-radius:999px;padding:10px 14px;font-weight:700}
+    .pill.gold{background:linear-gradient(180deg,var(--gold1),var(--gold2));color:#1a1207;border:0}
+    .actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:14px}
+    .btn{appearance:none;border:0;border-radius:14px;padding:13px 18px;font-weight:800;cursor:pointer;transition:transform .12s ease,box-shadow .12s ease}
+    .btn:active{transform:translateY(1px)}
+    .btn-sub{background:var(--btn);color:#fff;box-shadow:0 10px 24px rgba(225,29,72,.25)}
+    .btn-go{background:#111827;color:#e5e7eb;border:1px solid rgba(255,255,255,.1)}
+    /* ===== Игра ===== */
+    .game{display:none;max-width:880px;margin:40px auto 80px;padding:20px;border-radius:28px;background:radial-gradient(60% 80% at 50% 0%,rgba(255,207,118,.08),transparent 60%),#08080a}
+    .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;place-items:center}
+    .card{width:180px;height:260px;border-radius:18px;background:
+      linear-gradient(180deg,rgba(255,207,118,.35),rgba(224,180,79,.35)),
+      #0b0b0f;border:2px solid #d6b05f;display:grid;place-items:center;position:relative;overflow:hidden}
+    .card-face{font-size:64px}
+    .selectors{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:18px 0}
+    select{width:100%;background:#0f1115;color:#e5e7eb;border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:10px 12px}
+    .btn-guess{background:linear-gradient(180deg,var(--gold1),var(--gold2));color:#1a1207;box-shadow:0 12px 28px rgba(255,207,118,.2)}
+    .center{text-align:center}
+    .qr-modal{position:fixed;inset:0;display:none;place-items:center;background:rgba(0,0,0,.7);padding:20px}
+    .qr-box{background:#0b0b0f;border-radius:20px;padding:18px 18px 22px;width:min(92vw,460px);text-align:center}
+    .qr-box img{width:260px;max-width:80%;height:auto}
+    .muted{color:#9aa3af}
+    @media (max-width:620px){
+      .card{width:30vw;height:42vw}
+      .logo img{width:92%}
+    }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+</head>
+<body>
+  <!-- МОДАЛКА ПОДПИСКИ -->
+  <div class="overlay" id="welcome">
+    <div class="modal">
+      <div class="logo"><img src="images/secret-title.jpg" alt="ШОУ СЕКРЕТ"></div>
+      <h2 class="title">ШОУ СЕКРЕТ</h2>
+      <p class="lead">
+        <b>Официальная игра.</b> Чтобы попасть в игру и получить шанс на скидку — <b>подпишитесь на наш Telegram-канал</b>,
+        затем вернитесь и нажмите «Я проверил».
+      </p>
+      <div class="pills">
+        <span class="pill">1 совпадение — 10%</span>
+        <span class="pill">2 совпадения — 15%</span>
+        <span class="pill">3 совпадения — 20%</span>
+      </div>
+      <div class="pills">
+        <span class="pill gold">50% скидка</span>
+        <span class="pill gold">Бесплатный билет</span>
+      </div>
+      <div class="actions">
+        <button class="btn btn-sub" id="btn-sub">Подписаться</button>
+        <button class="btn btn-go" id="btn-check">Я проверил — перейти к игре</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- СЕКЦИЯ ИГРЫ -->
+  <section class="game" id="game">
+    <div class="center">
+      <div class="logo" style="margin:0 0 6px"><img src="images/secret-title.jpg" alt=""></div>
+      <h2 class="title" style="margin:0 0 16px">Угадай 3 карты</h2>
+      <p class="muted" style="margin:0 0 18px">Колода обновляется каждые 10 секунд. Номиналы: A, K, Q, J, 10.</p>
+    </div>
+
+    <div class="grid" id="cards">
+      <div class="card"><div class="card-face">🂠</div></div>
+      <div class="card"><div class="card-face">🂠</div></div>
+      <div class="card"><div class="card-face">🂠</div></div>
+    </div>
+
+    <div class="selectors" id="selectors"></div>
+
+    <div class="center">
+      <button class="btn btn-guess" id="btn-guess">Угадать</button>
+    </div>
+  </section>
+
+  <!-- модалка с QR -->
+  <div class="qr-modal" id="qr">
+    <div class="qr-box">
+      <div class="badge pill gold" style="display:inline-block;margin-bottom:10px">Официально</div>
+      <h3 class="title" style="margin:0 0 8px">Купон <span id="qrPrize"></span></h3>
+      <p class="muted" style="margin:0 0 12px">Покажите этот QR на кассе. Купон уникален и проверяется.</p>
+      <img id="qrImg" alt="QR">
+      <div class="actions" style="margin-top:14px">
+        <a id="qrLink" class="btn btn-go" href="#" target="_blank" rel="noopener">Открыть ссылку</a>
+        <a id="qrDownload" class="btn btn-guess" href="#" download="coupon-qr.png">Скачать QR</a>
+      </div>
+      <div class="muted" id="qrNote" style="margin-top:10px"></div>
+    </div>
+  </div>
+
+<script>
+  const TG_CHANNEL = "https://t.me/secretshowow"; // твой канал
+  const ranks = ["A","K","Q","J","10"];           // только 5 номиналов (как просил)
+  const $ = s => document.querySelector(s);
+
+  // ===== модалка
+  $("#btn-sub").onclick = () => window.open(TG_CHANNEL, "_blank");
+  $("#btn-check").onclick = () => {
+    $("#welcome").style.display = "none";
+    $("#game").style.display = "block";
+    resetDeck();
+  };
+
+  // ===== колода/игра
+  let secret = []; // три секрета
+  let revealTimer;
+
+  function randomRank(){ return ranks[Math.floor(Math.random()*ranks.length)]; }
+
+  function resetDeck(){
+    secret = [randomRank(), randomRank(), randomRank()];
+    renderSelectors();
+    clearTimeout(revealTimer);
+    revealTimer = setTimeout(resetDeck, 10000); // обновлять каждые 10 сек
+  }
+
+  function renderSelectors(){
+    const wrap = $("#selectors");
+    wrap.innerHTML = "";
+    for(let i=0;i<3;i++){
+      const sel = document.createElement("select");
+      ranks.forEach(r=>{
+        const opt = document.createElement("option");
+        opt.value = r; opt.textContent = r;
+        sel.appendChild(opt);
+      });
+      wrap.appendChild(sel);
+    }
+  }
+
+  function confettiBoom(){
+    const duration = 1400;
+    const end = Date.now() + duration;
+    (function frame(){
+      confetti({particleCount: 2, angle: 60, spread: 65, origin: {x:0}, scalar:1.2});
+      confetti({particleCount: 2, angle: 120, spread: 65, origin: {x:1}, scalar:1.2});
+      if (Date.now() < end) requestAnimationFrame(frame);
+    })();
+    confetti({ particleCount: 280, spread: 140, startVelocity: 45, scalar:1.1, ticks: 180 });
+  }
+
+  function flipCards(show){
+    const faces = [...document.querySelectorAll(".card .card-face")];
+    faces.forEach((f,i) => f.textContent = show ? secret[i] : "🂠");
+  }
+
+  $("#btn-guess").onclick = async () => {
+    const picks = [...document.querySelectorAll("#selectors select")].map(s=>s.value);
+    flipCards(true);
+
+    // посчитать попадания
+    let hits = 0; for(let i=0;i<3;i++){ if(picks[i]===secret[i]) hits++; }
+
+    // вероятности «крупных» призов (на вкус/цвет можно подкрутить):
+    let prizeText = null;
+    if (hits === 3) prizeText = "Скидка 20%";
+    else if (hits === 2) prizeText = "Скидка 15%";
+    else if (hits === 1) prizeText = "Скидка 10%";
+
+    // рандом доп.выигрыши:
+    const lucky50 = Math.random() < 0.06;  // ~6% шанс
+    const luckyFree = Math.random() < 0.02; // ~2% шанс
+    if (luckyFree) prizeText = "Бесплатный билет";
+    else if (lucky50) prizeText = "Скидка 50%";
+
+    if (!prizeText) {
+      alert("Чуть-чуть не хватило. Попробуй ещё!");
+      return;
+    }
+
+    // конфетти для 50% и бесплатного
+    if (prizeText.includes("50%") || prizeText.includes("Бесплатный")) {
+      confettiBoom();
+      setTimeout(()=>{}, 300);
+    }
+
+    // запрос на выпуск купона + QR
+    try {
+      const res = await fetch("/api/mint", {
+        method:"POST",
+        headers:{"content-type":"application/json"},
+        body: JSON.stringify({ prize: prizeText })
+      });
+      if (!res.ok) throw new Error("server");
+      const data = await res.json();
+
+      $("#qrPrize").textContent = prizeText;
+      $("#qrImg").src = data.qrDataUrl;
+      $("#qrLink").href = data.redeemUrl;
+      $("#qrDownload").href = data.qrDataUrl;
+      $("#qrNote").textContent = `ID: ${data.id}`;
+      $("#qr").style.display = "grid";
+    } catch(e){
+      alert("Не удалось выпустить купон. Открой сайт по домену *.vercel.app (там доступны /api/*).");
+    }
+  };
+
+  // клик вне QR — закрыть
+  $("#qr").addEventListener("click",(e)=>{ if(e.target.id==="qr") $("#qr").style.display="none"; });
+
+  // старт
+  renderSelectors();
+</script>
+</body>
+</html>
