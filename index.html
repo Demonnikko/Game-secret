@@ -1,157 +1,175 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ru">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>ШОУ «Секрет» — официальная игра</title>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
+<title>ШОУ СЕКРЕТ — официальная игра</title>
+
+<!-- Цвет статус-бара и PWA-хедеры -->
 <meta name="theme-color" content="#000000">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
 <!-- Шрифты -->
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@800;900&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
 
 <style>
-:root{
-  --bg:#000; --text:#EEE;
-  --muted:#B9BBC6;
-  --gold:#CBA135; --gold2:#E7C776;
-  --accent:#E34343; /* красная кнопка */
-  --ff:'Inter',system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
-  --r:16px;
-}
+  :root{
+    --bg:#000;              /* Абсолютно чёрный фон */
+    --ink:#EAEAF0;          /* Основной текст */
+    --muted:#9aa3b1;        /* Вторичный текст */
+    --panel:#050505;        /* Плашка */
+    --gold1:#FFE7A1;        /* Золото свет */
+    --gold2:#F2B84A;        /* Золото тень */
+    --glass-hl:rgba(255,255,255,.10);
+    --glass-md:rgba(255,255,255,.06);
+    --glass-dk:rgba(255,255,255,.03);
+    --r:28px;
+    --vh:100svh;            /* будет заменено JS на точную высоту */
+  }
 
-/* База */
-*{box-sizing:border-box;margin:0}
-html,body{height:100%}
-body{
-  background:#000; color:var(--text);
-  font:400 16px/1.55 var(--ff);
-  -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
-  -webkit-tap-highlight-color:transparent;
-}
+  /* Сброс + базовая типографика */
+  *,*::before,*::after{box-sizing:border-box}
+  html,body{height:100%;margin:0;background:#000;color:var(--ink)}
+  body{font:16px/1.6 'Inter',system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif; overscroll-behavior: none}
 
-/* Секция (учитываем «чёлку») */
-.wrap{
-  min-height:100dvh;
-  display:grid; place-items:center;
-  padding: calc(28px + env(safe-area-inset-top, 0px)) 14px calc(24px + env(safe-area-inset-bottom, 0px));
-  background:#000;
-}
+  /* Контейнер на всю видимую высоту включая safe-area */
+  .wrap{
+    min-height: var(--vh);
+    display:grid; place-items:center;
+    padding: calc(max(16px, env(safe-area-inset-top))) 16px calc(max(20px, env(safe-area-inset-bottom)));
+    background:#000;
+  }
 
-/* Карточка без серых плашек — абсолютно чёрная */
-.card{
-  width:min(720px, 96vw);
-  background:#000; /* слиться с фоном */
-  border-radius:var(--r);
-  text-align:center;
-}
+  /* Карточка/модалка */
+  .card{
+    width:min(96vw,820px);
+    background: var(--panel);
+    border-radius: var(--r);
+    padding: clamp(24px,3vw,36px);
+    border: 1px solid rgba(255,255,255,.08);
+    box-shadow:
+      0 0 1px rgba(255,255,255,.04) inset,
+      0 18px 60px rgba(0,0,0,.85);
+    text-align:center;
+  }
 
-/* Лого */
-.logo{
-  display:flex; justify-content:center; align-items:center;
-  margin: 4px 0 10px;
-}
-.logo img{
-  width:min(520px, 82vw);
-  height:auto; display:block;
-}
+  /* Логотип */
+  .logo{display:grid;place-items:center;margin: 2px 0 18px}
+  .logo img{
+    display:block;
+    width:min(560px,86vw);
+    height:auto;
+    filter: drop-shadow(0 0 14px rgba(0,0,0,.6));
+    border-radius: 10px; /* чтоб край на чёрном был мягкий */
+  }
 
-/* Заголовок и подзаголовок */
-.h1{
-  font-weight:700; font-size:clamp(22px,4.6vw,32px);
-  letter-spacing:.02em;
-}
-.sub{
-  margin-top:.35rem; color:var(--muted);
-  font-size:clamp(14px,3.4vw,16px);
-}
+  /* Заголовки — Cinzel */
+  .title{
+    font-family:'Cinzel',serif;
+    font-weight:900;
+    letter-spacing:.06em;
+    font-size: clamp(22px,3.4vw,34px);
+    margin: 4px 0 8px;
+  }
+  .subtitle{
+    font-weight:600;
+    color:var(--ink);
+    font-size: clamp(16px,2.3vw,18px);
+    margin: 6px 0 18px;
+  }
 
-/* Правила/призы */
-.rules{
-  margin: 14px auto 18px; color:#DDD;
-  font-size:clamp(14px,3.4vw,16px);
-  max-width:min(640px, 94vw);
-}
-.prizes{
-  display:grid; gap:8px; justify-items:center;
-  margin-top:10px;
-}
-.badge{
-  display:inline-flex; align-items:center; justify-content:center;
-  padding:.5rem .8rem; border-radius:999px;
-  font-weight:600; font-size:clamp(13px,3.2vw,15px);
-  border:1px solid #2a2a2a; background:#0b0b0b;
-}
-.badge--highlight{
-  border:1px solid rgba(203,161,53,.42);
-  background:linear-gradient(160deg, rgba(203,161,53,.10), rgba(231,199,118,.08));
-  color:#F3E3B5;
-  box-shadow:0 0 0 1px rgba(255,255,255,.06) inset, 0 10px 30px rgba(203,161,53,.10);
-}
+  /* Блок «что получите» */
+  .h2{
+    font-family:'Cinzel',serif; font-weight:800;
+    letter-spacing:.04em;
+    font-size: clamp(18px,2.6vw,22px);
+    margin: 14px 0 10px;
+  }
+  .list{
+    display:flex; flex-wrap:wrap; gap:10px 12px; justify-content:center;
+    margin: 4px 0 8px;
+  }
+  .chip{
+    padding:10px 14px; border-radius:999px;
+    backdrop-filter: blur(6px);
+    background: linear-gradient(180deg, var(--glass-hl), var(--glass-dk));
+    border:1px solid var(--glass-md);
+    color:var(--ink); font-weight:800; letter-spacing:.02em;
+  }
 
-/* Кнопка Подписаться — ярко-красная, центр */
-.cta{
-  margin-top:18px; display:flex; justify-content:center;
-}
-.btn{
-  appearance:none; border:none; cursor:pointer;
-  font:700 16px var(--ff); letter-spacing:.02em;
-  padding:1rem 1.4rem; border-radius:12px;
-  background:var(--accent); color:#fff;
-  box-shadow:0 12px 30px rgba(227,67,67,.35);
-  transition:transform .12s ease, filter .15s ease, opacity .2s ease;
-}
-.btn:active{ transform:translateY(1px) }
-.btn:hover{ filter:brightness(1.06) }
-.btn:focus-visible{ outline:2px solid #ffb3b3; outline-offset:2px }
+  .note{
+    margin: 10px 0 18px; color:var(--muted);
+    font-size: clamp(14px,2.2vw,16px);
+  }
 
-/* Низ страницы (дисклеймер) */
-.note{
-  margin-top:16px; color:#9a9aa0; font-size:12px;
-}
+  /* Стеклянно-золотая кнопка (по центру) */
+  .actions{display:grid;place-items:center;margin-top: 10px}
+  .cta{
+    display:inline-grid; place-items:center;
+    padding: 14px 22px;
+    border-radius: 16px;
+    color:#1a1307; font-weight:900; letter-spacing:.02em;
+    text-decoration:none;
+    background: linear-gradient(180deg, var(--gold1), var(--gold2));
+    box-shadow:
+      0 0 0 1px rgba(255,255,255,.25) inset,
+      0 12px 34px rgba(255,204,98,.28);
+    position:relative;
+    transition: transform .15s ease, filter .15s ease;
+  }
+  .cta::after{
+    content:""; position:absolute; inset:0; border-radius:inherit;
+    background: linear-gradient(180deg, rgba(255,255,255,.20), rgba(255,255,255,0) 46%);
+    mix-blend-mode:screen; pointer-events:none;
+  }
+  .cta:hover{ transform: translateY(-1px); filter: saturate(1.06) }
+  .cta:active{ transform: translateY(0) }
 
-/* Мобильные/узкие — всё по центру и равные отступы */
-@media (max-width:420px){
-  .rules{ margin: 12px auto 16px }
-  .cta{ margin-top:16px }
-}
+  @media (max-width:480px){
+    .card{ border-radius:22px; padding:20px }
+    .cta{ width:100% }
+  }
 </style>
 </head>
 <body>
-<main class="wrap">
-  <section class="card" aria-label="Форма захвата — ШОУ «Секрет»">
-    <!-- ЛОГО -->
-    <div class="logo">
-      <!-- Замените путь, если у вас иной файл -->
-      <img src="images/secret-logo.png" alt="ШОУ «Секрет»" width="520" height="220" loading="eager" decoding="async">
-    </div>
-
-    <!-- ТЕКСТ -->
-    <h1 class="h1">Официальная игра</h1>
-    <p class="sub">Чтобы попасть в игру и получить шанс на скидку — подпишитесь на Telegram-канал.</p>
-
-    <!-- ПРИЗЫ -->
-    <div class="rules">
-      <div>Что можно выиграть:</div>
-      <div class="prizes">
-        <span class="badge">1 совпадение — 10%</span>
-        <span class="badge">2 совпадения — 15%</span>
-        <span class="badge">3 совпадения — 20%</span>
-        <span class="badge badge--highlight">Скидка 50%</span>
-        <span class="badge badge--highlight">Бесплатный билет</span>
+  <main class="wrap">
+    <section class="card" role="dialog" aria-modal="true" aria-labelledby="t1">
+      <!-- ЛОГО: положи файл в images/secret-title.jpg -->
+      <div class="logo">
+        <img src="images/secret-title.jpg" alt="ШОУ СЕКРЕТ — логотип" onerror="this.style.display='none'">
       </div>
-    </div>
 
-    <!-- КНОПКА ТОЛЬКО ОДНА -->
-    <div class="cta">
-      <a class="btn" href="https://t.me/+H3dPKSd-AKs1N2Ji" target="_blank" rel="noopener">
-        Подписаться
-      </a>
-    </div>
+      <h1 id="t1" class="title">ШОУ «Секрет» · Официальная игра</h1>
+      <p class="subtitle">Чтобы попасть в игру и получить шанс на скидку — подпишитесь на Telegram-канал.</p>
 
-    <div class="note">После подписки вернитесь сюда и перейдите к игре по ссылке из закреплённого поста.</div>
-  </section>
-</main>
+      <div class="h2">Что вы можете выиграть:</div>
+      <div class="list" aria-label="Возможные призы">
+        <span class="chip">10% скидка</span>
+        <span class="chip">15% скидка</span>
+        <span class="chip">20% скидка</span>
+        <span class="chip">50% скидка</span>
+        <span class="chip">Бесплатный билет</span>
+      </div>
+
+      <div class="note">Всего три попытки открыть сундук.</div>
+
+      <div class="actions">
+        <a id="subBtn" class="cta" href="https://t.me/+SEXWNgTBCUo4Nzhi" rel="noopener">Подписаться</a>
+      </div>
+    </section>
+  </main>
+
+<script>
+  // Точный «vh» на мобилках (iOS/Android), чтобы фон заполнял экран и «чёлку».
+  (function fixVH(){
+    const set = ()=> document.documentElement.style.setProperty('--vh', window.innerHeight+'px');
+    set();
+    addEventListener('resize', set, {passive:true});
+    addEventListener('orientationchange', set, {passive:true});
+  })();
+</script>
 </body>
 </html>
