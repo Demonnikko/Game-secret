@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>ШОУ СЕКРЕТ — вход</title>
+  <style>
+    :root{
+      --bg:#000;          /* общий фон (чёрный)   */
+      --panel:#060606;    /* фон карточки-модалки */
+      --ink:#e9edf5;      /* основной текст       */
+      --muted:#9aa3b1;    /* вторичный текст      */
+      --gold1:#ffcB6b;    /* золото (свет)        */
+      --gold2:#b48620;    /* золото (тень)        */
+      --red:#e84242;      /* красная кнопка       */
+      --ring:rgba(255,255,255,.08);
+      --shadow-1: 0 0 1px rgba(255,255,255,.05) inset,
+                  0 14px 50px rgba(0,0,0,.75);
+    }
+
+    html,body{
+      height:100%;
+      margin:0;
+      background:var(--bg);
+      color:var(--ink);
+      font:16px/1.6 ui-sans-serif,system-ui,Segoe UI,Inter,Roboto,Arial;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+    }
+
+    /* Центровщик модалки */
+    .wrap{
+      min-height:100%;
+      display:grid;
+      place-items:center;
+      padding:24px;
+    }
+
+    /* Модалка */
+    .card{
+      width:min(92vw,720px);
+      background:var(--panel);
+      border-radius:28px;
+      padding:28px 26px 34px;
+      box-shadow:var(--shadow-1);
+      border:1px solid var(--ring);
+    }
+
+    /* Логотип */
+    .logo{
+      display:grid;
+      place-items:center;
+      margin:4px 0 18px;
+    }
+    .logo img{
+      display:block;
+      width:90%;
+      max-width:520px;
+      height:auto;
+
+      /* оптическая “чёткость” */
+      image-rendering:-webkit-optimize-contrast;
+      image-rendering:crisp-edges;
+      -ms-interpolation-mode:nearest-neighbor;
+      filter:
+        contrast(1.08) saturate(1.06) brightness(1.02)
+        drop-shadow(0 0 2px rgba(0,0,0,.35))
+        drop-shadow(0 14px 28px rgba(0,0,0,.6));
+      backface-visibility:hidden;
+      transform:translateZ(0);
+      will-change:filter;
+    }
+
+    /* Заголовок */
+    h1{
+      margin:8px 0 0;
+      text-align:center;
+      letter-spacing:.06em;
+      font-weight:900;
+      font-size:clamp(22px,3.2vw,26px);
+      text-transform:uppercase;
+    }
+
+    /* Подводка */
+    .lead{
+      margin:10px auto 18px;
+      text-align:center;
+      max-width:720px;
+      color:var(--ink);
+      font-weight:600;
+      opacity:.96;
+    }
+    .lead b{
+      font-weight:800;
+    }
+
+    /* Пилюли с правилами */
+    .pills{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      justify-content:center;
+      margin:12px 0 20px;
+    }
+    .pill{
+      display:inline-block;
+      padding:10px 14px;
+      border-radius:999px;
+      font-weight:700;
+      font-size:14px;
+      border:1px solid var(--ring);
+      background:rgba(255,255,255,.02);
+      color:var(--ink);
+      box-shadow:0 0 1px rgba(255,255,255,.05) inset,
+                 0 8px 22px rgba(0,0,0,.45);
+      white-space:nowrap;
+      letter-spacing:.02em;
+    }
+    .pill--accent{
+      background:linear-gradient(180deg,var(--gold1),var(--gold2));
+      color:#1a1307;
+      border:0;
+      box-shadow:
+        0 0 0 1px rgba(0,0,0,.05) inset,
+        0 14px 28px rgba(0,0,0,.55);
+    }
+
+    /* Кнопки действий */
+    .actions{
+      display:grid;
+      grid-template-columns:1fr;
+      gap:12px;
+      justify-items:center;
+      margin-top:4px;
+    }
+    .btn{
+      appearance:none;
+      border:0;
+      cursor:pointer;
+      padding:14px 18px;
+      border-radius:14px;
+      font-weight:900;
+      font-size:16px;
+      letter-spacing:.02em;
+      transition:transform .05s ease, filter .2s ease, box-shadow .2s ease;
+      outline: none;
+    }
+    .btn:active{ transform:translateY(1px); }
+
+    .btn--primary{
+      /* ярко-красная, как просили */
+      background:linear-gradient(180deg,#ff5959,#d72e2e);
+      color:#fff;
+      box-shadow:
+        0 0 0 1px rgba(255,255,255,.06) inset,
+        0 10px 26px rgba(215,46,46,.45),
+        0 2px 0 rgba(255,255,255,.04) inset;
+    }
+    .btn--ghost{
+      background:rgba(255,255,255,.06);
+      color:var(--ink);
+      border:1px solid var(--ring);
+    }
+    .btn:hover{ filter:brightness(1.04); }
+
+    /* Небольшие акценты */
+    .sub{
+      text-align:center;
+      color:var(--muted);
+      font-size:13.5px;
+      margin-top:6px;
+      letter-spacing:.01em;
+    }
+
+    @media (max-width:420px){
+      .card{ padding:22px 18px 26px; border-radius:22px; }
+      .pill{ font-size:13px; padding:9px 12px; }
+      .btn{ font-size:15px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <section class="card" role="dialog" aria-labelledby="title">
+      <div class="logo" aria-hidden="true">
+        <!-- логотип: чёрный фон + золото, файл не меняем -->
+        <img src="images/secret-title.jpg" alt="ШОУ СЕКРЕТ — логотип" />
+      </div>
+
+      <h1 id="title">ШОУ СЕКРЕТ</h1>
+
+      <p class="lead">
+        <b>Официальная игра.</b> Чтобы попасть в игру и получить шанс на скидку — 
+        подпишитесь на наш Telegram-канал, затем вернитесь и начните играть.
+      </p>
+
+      <div class="pills" aria-label="Правила выигрышей">
+        <span class="pill">1 совпадение — 10%</span>
+        <span class="pill">2 совпадения — 15%</span>
+        <span class="pill">3 совпадения — 20%</span>
+        <span class="pill pill--accent">50% скидка</span>
+        <span class="pill pill--accent">Бесплатный билет</span>
+      </div>
+
+      <div class="actions">
+        <!-- ВШИТ ССЫЛКУ НА ТВОЮ ЗАКРЫТУЮ ГРУППУ -->
+        <a class="btn btn--primary" href="https://t.me/+WmBuXMDEMANkYjgy" target="_blank" rel="noopener">Подписаться</a>
+
+        <!-- Заглушка «перейти к игре» — позже заменим на проверку -->
+        <button class="btn btn--ghost" type="button" onclick="alert('После подписки вернитесь сюда — на следующем шаге подключим открытие игры.');">
+          Я проверил — перейти к игре
+        </button>
+      </div>
+    </section>
+  </div>
+</body>
+</html>
