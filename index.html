@@ -14,28 +14,24 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 
   <style>
-    /* ===== БАЗА / ТЕМАТИКА ===== */
     :root{
-      --bg:#000;          /* общий фон (чёрный) */
-      --panel:#060606;    /* фон карточки-модалки */
-      --ink:#e9edf5;      /* основной текст       */
-      --muted:#9aa3b1;    /* вторичный текст      */
-      --gold1:#ffcB6b;    /* золото (свет)        */
-      --gold2:#b48620;    /* золото (тень)        */
-      --red:#e84242;      /* красная кнопка       */
+      --bg:#000;
+      --panel:#060606;
+      --ink:#e9edf5;
+      --muted:#9aa3b1;
+      --gold1:#ffcB6b;
+      --gold2:#b48620;
+      --red:#e84242;
       --ring:rgba(255,255,255,.08);
       --shadow-1:
         0 0 1px rgba(255,255,255,.05) inset,
         0 14px 50px rgba(0,0,0,.75);
-
-      /* по умолчанию 0, переопределим, если есть safe-area */
-      --sat:0px; /* top    */
-      --sar:0px; /* right  */
-      --sab:0px; /* bottom */
-      --sal:0px; /* left   */
+      --sat:0px;
+      --sar:0px;
+      --sab:0px;
+      --sal:0px;
     }
 
-    /* iOS 11–12 (старый синтаксис constant()) */
     @supports(padding:max(0px)){
       :root{
         --sat: max( env(safe-area-inset-top),    constant(safe-area-inset-top) );
@@ -45,7 +41,6 @@
       }
     }
 
-    /* ===== ГЛОБАЛ ===== */
     html,body{
       height:100%;
       margin:0;
@@ -54,26 +49,23 @@
       font:16px/1.6 ui-sans-serif,system-ui,Segoe UI,Inter,Roboto,Arial;
       -webkit-font-smoothing:antialiased;
       -moz-osx-font-smoothing:grayscale;
-
-      /* убираем подсветки и «отскок» */
       overscroll-behavior: none;
       -webkit-tap-highlight-color: transparent;
       scroll-behavior: smooth;
     }
 
-    /* Плашка под статус-баром, чтобы вообще ничего не «светилось» */
     body::before{
       content:"";
       position:fixed;
       z-index:0;
-      inset:0;             /* во все края */
-      background:#000;     /* чисто чёрный */
+      inset:0;
+      background:#000;
     }
 
     .wrap{
       position:relative;
       z-index:1;
-      min-height:100svh;              /* стабильная высота вьюпорта */
+      min-height:100svh;
       display:grid;
       place-items:center;
       padding:
@@ -202,7 +194,6 @@
   <div class="wrap">
     <section class="card" role="dialog" aria-labelledby="title">
       <div class="logo">
-        <!-- Положи файл в images/secret-title.jpg -->
         <img src="images/secret-title.jpg" alt="ШОУ СЕКРЕТ — логотип" />
       </div>
 
@@ -223,7 +214,7 @@
 
       <div class="actions">
         <a class="btn btn--primary"
-           href="https://t.me/+WmBuXMDEMANkYjgy"
+           href="https://t.me/+k5op3cwoHShkNDcy"
            target="_blank" rel="noopener">
           Подписаться
         </a>
